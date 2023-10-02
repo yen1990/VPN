@@ -1,0 +1,24 @@
+listitem = xbmcgui.ListItem(path='https://ubn-streamer1.cdn.3bbtv.com:8443/3bb/live/5/5.mpd')
+
+listitem.setMimeType('application/xml+dash')
+listitem.setContentLookup(False)
+
+listitem.setProperty('inputstream', 'inputstream.adaptive')
+listitem.setProperty('inputstream.adaptive.manifest_type', 'mpd') # Deprecated on Kodi 21
+listitem.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+
+license_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0',
+    'Content-Type': 'application/octet-stream',
+    'Origin': 'https://www.somesite.com'
+}
+from urllib.parse import urlencode
+license_config = { # for Python < v3.7 you should use OrderedDict to keep order
+    'license_server_url': 'https://license.server.com/licenserequest',
+    'headers': urlencode(license_headers),
+    'post_data': 'R{SSM}',
+    'response_data': 'R'
+}
+listitem.setProperty('inputstream.adaptive.license_key', '|'.join(license_config.values()))
+
+xbmcplugin.setResolvedUrl(pluginhandle, True, listitem=listitem)
